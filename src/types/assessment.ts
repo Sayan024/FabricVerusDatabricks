@@ -74,6 +74,9 @@ export interface AdvancedInputs {
   goldLayerGB?: number;
   retentionMonths?: number;
   monthlyStorageGrowthGB?: number;
+
+  // Fabric connectors in use
+  fabricConnectors?: string[];
 }
 
 export interface GranularCostBreakdown {
