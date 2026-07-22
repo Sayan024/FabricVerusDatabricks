@@ -50,6 +50,11 @@ You are an expert Enterprise AI Solution Architect specializing in Microsoft Fab
 - **Excel Files/day**: ${advancedInputs.excelFilesDaily || 'N/A'} | **CSV Files/day**: ${advancedInputs.csvFilesDaily || 'N/A'}
 - **Reports**: ${advancedInputs.reportsCount || 'N/A'} | **Semantic Models**: ${advancedInputs.semanticModelsCount || 'N/A'}
 - **Pipelines**: ${advancedInputs.etlPipelinesCount || 'N/A'} | **Spark Notebooks**: ${advancedInputs.notebooksCount || 'N/A'}
+- **Selected Source Systems & Fabric Connectors**: ${
+    advancedInputs.fabricConnectors && advancedInputs.fabricConnectors.length > 0
+      ? advancedInputs.fabricConnectors.join(', ')
+      : 'None explicitly selected'
+  }
 
 ---
 

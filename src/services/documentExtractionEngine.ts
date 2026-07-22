@@ -197,6 +197,7 @@ function formatParsedExtraction(parsed: any, mergedMarkdown: string, docNames: s
       reportsCount: makeField<number>(a.reportsCount, primaryDoc),
       semanticModelsCount: makeField<number>(a.semanticModelsCount, primaryDoc),
       totalStorageGB: makeField<number>(a.totalStorageGB, primaryDoc),
+      fabricConnectors: Array.isArray(a.fabricConnectors) ? a.fabricConnectors : undefined,
     },
     conflicts: Array.isArray(parsed.conflicts) ? parsed.conflicts : [],
     missingFields: [],
@@ -337,6 +338,18 @@ function generateHeuristicExtractionFallback(mergedMarkdown: string, docNames: s
     totalStorageGB = Math.round(sumGB);
     storageQuote = `Calculated total storage metric from document (${totalStorageGB} GB)`;
   }
+
+  const connectorsFound: string[] = [];
+  if (/sap/i.test(mergedMarkdown)) connectorsFound.push('sap_ecc', 'sap_bw');
+  if (/sql server/i.test(mergedMarkdown)) connectorsFound.push('sql_server');
+  if (/oracle/i.test(mergedMarkdown)) connectorsFound.push('oracle');
+  if (/salesforce/i.test(mergedMarkdown)) connectorsFound.push('salesforce');
+  if (/snowflake/i.test(mergedMarkdown)) connectorsFound.push('snowflake');
+  if (/rest api|rest apis|api/i.test(mergedMarkdown)) connectorsFound.push('rest_api');
+  if (/sharepoint|excel/i.test(mergedMarkdown)) connectorsFound.push('sharepoint_lists', 'excel_online');
+  if (/s3|amazon s3/i.test(mergedMarkdown)) connectorsFound.push('amazon_s3');
+  if (/bigquery|google bigquery/i.test(mergedMarkdown)) connectorsFound.push('google_bigquery');
+  if (/postgres|postgresql/i.test(mergedMarkdown)) connectorsFound.push('postgresql');
 
   const hasML = /machine learning|python notebooks|mlflow/i.test(mergedMarkdown);
   const hasEng = /data engineering|etl|spark|pipelines/i.test(mergedMarkdown);
@@ -498,6 +511,7 @@ function generateHeuristicExtractionFallback(mergedMarkdown: string, docNames: s
         quote: storageQuote,
         status: 'pending',
       },
+      fabricConnectors: connectorsFound.length > 0 ? connectorsFound : undefined,
     },
     conflicts: [],
     missingFields: [],

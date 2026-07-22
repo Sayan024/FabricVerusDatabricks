@@ -97,6 +97,13 @@ export function calculateConfidence(
     missing.push('Historical storage retention & monthly growth rate');
   }
 
+  if (advanced.fabricConnectors && advanced.fabricConnectors.length > 0) {
+    score += 4;
+    provided.push(`Selected source system connectors (${advanced.fabricConnectors.length} systems)`);
+  } else {
+    missing.push('Source systems & Fabric connector inventory');
+  }
+
   score = clamp(score, 60, 98);
 
   let reason = '';

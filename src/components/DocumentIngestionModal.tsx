@@ -162,6 +162,7 @@ export const DocumentIngestionModal: React.FC<DocumentIngestionModalProps> = ({
       dataFactoryPipelinesCount: a.dataFactoryPipelinesCount?.value || undefined,
       mlWorkloadsCount: a.mlWorkloadsCount?.value || undefined,
       totalStorageGB: a.totalStorageGB?.value || undefined,
+      fabricConnectors: a.fabricConnectors || undefined,
     };
 
     onApplyAssessment(quickInputs, advancedInputs, masterContextText);

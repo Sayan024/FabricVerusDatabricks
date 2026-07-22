@@ -61,19 +61,24 @@ function parseUrlInputs(): { quick: QuickInputs; advanced: AdvancedInputs; isPre
   if (sp.get('dbs')) advanced.databasesCount = Number(sp.get('dbs'));
   if (sp.get('tbls')) advanced.tablesCount = Number(sp.get('tbls'));
   if (sp.get('stor')) advanced.totalStorageGB = Number(sp.get('stor'));
+  if (sp.get('conn')) advanced.fabricConnectors = sp.get('conn')!.split(',').filter(Boolean);
 
   return { quick, advanced, isPreset: true };
 }
 
-function encodeUrlInputs(quick: QuickInputs) {
-  const sp = new URLSearchParams({
+function encodeUrlInputs(quick: QuickInputs, advanced?: AdvancedInputs) {
+  const params: Record<string, string> = {
     vol: String(quick.dataVolumeGB || 0),
     users: String(quick.concurrentUsers || 0),
     mix: quick.workloadMix,
     ref: quick.processingPattern,
     skill: quick.teamSkillset,
     region: quick.region,
-  });
+  };
+  if (advanced?.fabricConnectors?.length) {
+    params.conn = advanced.fabricConnectors.join(',');
+  }
+  const sp = new URLSearchParams(params);
   return `${window.location.origin}${window.location.pathname}?${sp.toString()}`;
 }
 
@@ -129,7 +134,7 @@ export const App: React.FC = () => {
     const result = runFullAssessment(quickInputs, advancedInputs);
     setAssessment(result);
 
-    const shareUrl = encodeUrlInputs(quickInputs);
+    const shareUrl = encodeUrlInputs(quickInputs, advancedInputs);
     window.history.replaceState({}, '', shareUrl);
 
     if (window.innerWidth < 1024) {
@@ -166,7 +171,7 @@ export const App: React.FC = () => {
   };
 
   const handleShare = () => {
-    const url = encodeUrlInputs(quickInputs);
+    const url = encodeUrlInputs(quickInputs, advancedInputs);
     navigator.clipboard.writeText(url).then(() => {
       setShareState('copied');
       setTimeout(() => setShareState('idle'), 2500);

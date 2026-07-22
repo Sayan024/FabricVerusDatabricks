@@ -71,6 +71,8 @@ export interface ExtractedAdvancedInputs {
 
   mlWorkloadsCount?: ExtractedField<number>;
   totalStorageGB?: ExtractedField<number>;
+
+  fabricConnectors?: string[];
 }
 
 export interface DocumentExtractionResult {
