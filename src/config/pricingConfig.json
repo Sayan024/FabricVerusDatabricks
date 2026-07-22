@@ -1,0 +1,210 @@
+{
+  "pricingDate": "July 2025",
+  "currency": "USD",
+  "usdToInrRate": 85.0,
+  "regions": {
+    "central_india": {
+      "name": "Central India (Pune)",
+      "currency": "INR",
+      "symbol": "₹",
+      "fabricRatePerHourUSD": 0.24,
+      "fabricMultiplier": 1.3333,
+      "databricksMultiplier": 1.20,
+      "isIndianRegion": true,
+      "databricksVmEstimateNote": "Databricks DBU rates are region-stable; Central India Azure D-series VMs run ~15-25% above US East."
+    },
+    "south_india": {
+      "name": "South India (Chennai)",
+      "currency": "INR",
+      "symbol": "₹",
+      "fabricRatePerHourUSD": 0.24,
+      "fabricMultiplier": 1.3333,
+      "databricksMultiplier": 1.20,
+      "isIndianRegion": true,
+      "databricksVmEstimateNote": "Databricks DBU rates are region-stable; South India Azure VMs run ~15-25% above US East."
+    },
+    "west_india": {
+      "name": "West India (Mumbai)",
+      "currency": "INR",
+      "symbol": "₹",
+      "fabricRatePerHourUSD": 0.24,
+      "fabricMultiplier": 1.3333,
+      "databricksMultiplier": 1.20,
+      "isIndianRegion": true,
+      "databricksVmEstimateNote": "Databricks DBU rates are region-stable; West India Azure VMs run ~15-25% above US East."
+    },
+    "us_east": {
+      "name": "US East (N. Virginia)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.18,
+      "fabricMultiplier": 1.0,
+      "databricksMultiplier": 1.0,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "US East standard list pricing baseline."
+    },
+    "us_east_2": {
+      "name": "US East 2 (Ohio)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.18,
+      "fabricMultiplier": 1.0,
+      "databricksMultiplier": 1.0,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "US East 2 standard list pricing."
+    },
+    "us_west": {
+      "name": "US West (California)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.20,
+      "fabricMultiplier": 1.1111,
+      "databricksMultiplier": 1.08,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "US West standard list pricing."
+    },
+    "us_west_2": {
+      "name": "US West 2 (Oregon)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.18,
+      "fabricMultiplier": 1.0,
+      "databricksMultiplier": 1.0,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "US West 2 standard list pricing."
+    },
+    "us_central": {
+      "name": "US Central (Iowa)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.18,
+      "fabricMultiplier": 1.0,
+      "databricksMultiplier": 1.0,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "US Central standard list pricing."
+    },
+    "uk_south": {
+      "name": "UK South (London)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.21,
+      "fabricMultiplier": 1.1667,
+      "databricksMultiplier": 1.12,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "UK South standard list pricing."
+    },
+    "europe_west": {
+      "name": "Europe West (Netherlands)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.21,
+      "fabricMultiplier": 1.1667,
+      "databricksMultiplier": 1.12,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Europe West standard list pricing."
+    },
+    "europe_north": {
+      "name": "Europe North (Ireland)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.20,
+      "fabricMultiplier": 1.1111,
+      "databricksMultiplier": 1.10,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Europe North standard list pricing."
+    },
+    "southeast_asia": {
+      "name": "Southeast Asia (Singapore)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.22,
+      "fabricMultiplier": 1.2222,
+      "databricksMultiplier": 1.15,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Southeast Asia standard list pricing."
+    },
+    "east_asia": {
+      "name": "East Asia (Hong Kong)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.22,
+      "fabricMultiplier": 1.2222,
+      "databricksMultiplier": 1.15,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "East Asia standard list pricing."
+    },
+    "japan_east": {
+      "name": "Japan East (Tokyo)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.23,
+      "fabricMultiplier": 1.2778,
+      "databricksMultiplier": 1.18,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Japan East standard list pricing."
+    },
+    "australia_east": {
+      "name": "Australia East (New South Wales)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.23,
+      "fabricMultiplier": 1.2778,
+      "databricksMultiplier": 1.18,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Australia East standard list pricing."
+    },
+    "uae_north": {
+      "name": "UAE North (Dubai)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.24,
+      "fabricMultiplier": 1.3333,
+      "databricksMultiplier": 1.22,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "UAE North standard list pricing."
+    },
+    "brazil_south": {
+      "name": "Brazil South (Sao Paulo)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.26,
+      "fabricMultiplier": 1.4444,
+      "databricksMultiplier": 1.30,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Brazil South standard list pricing."
+    },
+    "canada_central": {
+      "name": "Canada Central (Toronto)",
+      "currency": "USD",
+      "symbol": "$",
+      "fabricRatePerHourUSD": 0.20,
+      "fabricMultiplier": 1.1111,
+      "databricksMultiplier": 1.08,
+      "isIndianRegion": false,
+      "databricksVmEstimateNote": "Canada Central standard list pricing."
+    }
+  },
+  "fabric": {
+    "skus": [
+      { "sku": "F2", "cus": 2, "baseMonthlyUSD": 262 },
+      { "sku": "F4", "cus": 4, "baseMonthlyUSD": 525 },
+      { "sku": "F8", "cus": 8, "baseMonthlyUSD": 1050 },
+      { "sku": "F16", "cus": 16, "baseMonthlyUSD": 2100 },
+      { "sku": "F32", "cus": 32, "baseMonthlyUSD": 4200 },
+      { "sku": "F64", "cus": 64, "baseMonthlyUSD": 8400 },
+      { "sku": "F128", "cus": 128, "baseMonthlyUSD": 16800 },
+      { "sku": "F256", "cus": 256, "baseMonthlyUSD": 33600 },
+      { "sku": "F512", "cus": 512, "baseMonthlyUSD": 67200 }
+    ],
+    "oneLakeStoragePerGBUSD": 0.023
+  },
+  "databricks": {
+    "ratesUSD": {
+      "sqlWarehouse": { "dbuPerHr": 2, "ratePerDbuUSD": 0.22 },
+      "jobsCompute": { "dbuPerHr": 2, "ratePerDbuUSD": 0.30 },
+      "allPurpose": { "dbuPerHr": 4, "ratePerDbuUSD": 0.55 },
+      "mlCompute": { "dbuPerHr": 4, "ratePerDbuUSD": 0.55 }
+    },
+    "adlsStoragePerGBUSD": 0.02
+  }
+}
