@@ -17,6 +17,17 @@ import { DocumentIngestionModal } from './components/DocumentIngestionModal';
 import { Footer } from './components/Footer';
 import { Calendar, CheckCircle, Sparkles, Upload, ArrowRight, Zap, Bot, MessageSquare } from 'lucide-react';
 
+// Empty starting state shown to users on first load
+const BLANK_QUICK: QuickInputs = {
+  dataVolumeGB: 0,
+  concurrentUsers: 0,
+  workloadMix: 'bi_only',
+  processingPattern: 'batch',
+  teamSkillset: 'sql_powerbi',
+  region: 'central_india',
+};
+
+// Only used when restoring from a shared URL or after "Load Demo"
 const DEFAULT_QUICK: QuickInputs = {
   dataVolumeGB: 250,
   concurrentUsers: 50,
@@ -32,9 +43,14 @@ function parseUrlInputs(): { quick: QuickInputs; advanced: AdvancedInputs; isPre
   const sp = new URLSearchParams(window.location.search);
   const hasParams = sp.has('vol') || sp.has('users');
 
+  // If no URL params, return blank state so the form starts empty
+  if (!hasParams) {
+    return { quick: { ...BLANK_QUICK }, advanced: {}, isPreset: false };
+  }
+
   const quick: QuickInputs = {
-    dataVolumeGB: sp.get('vol') ? Number(sp.get('vol')) : DEFAULT_QUICK.dataVolumeGB,
-    concurrentUsers: sp.get('users') ? Number(sp.get('users')) : DEFAULT_QUICK.concurrentUsers,
+    dataVolumeGB: sp.get('vol') ? Number(sp.get('vol')) : 0,
+    concurrentUsers: sp.get('users') ? Number(sp.get('users')) : 0,
     workloadMix: (sp.get('mix') as any) || DEFAULT_QUICK.workloadMix,
     processingPattern: (sp.get('ref') as any) || DEFAULT_QUICK.processingPattern,
     teamSkillset: (sp.get('skill') as any) || DEFAULT_QUICK.teamSkillset,
@@ -46,7 +62,7 @@ function parseUrlInputs(): { quick: QuickInputs; advanced: AdvancedInputs; isPre
   if (sp.get('tbls')) advanced.tablesCount = Number(sp.get('tbls'));
   if (sp.get('stor')) advanced.totalStorageGB = Number(sp.get('stor'));
 
-  return { quick, advanced, isPreset: hasParams };
+  return { quick, advanced, isPreset: true };
 }
 
 function encodeUrlInputs(quick: QuickInputs) {
@@ -72,9 +88,11 @@ export const App: React.FC = () => {
   const [isIngestionModalOpen, setIsIngestionModalOpen] = useState(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
 
+  // Only restore & auto-run assessment when opening a shared URL
   useEffect(() => {
-    if (quickInputs.dataVolumeGB > 0 && quickInputs.concurrentUsers > 0) {
-      setAssessment(runFullAssessment(quickInputs, advancedInputs));
+    const { isPreset, quick, advanced } = parseUrlInputs();
+    if (isPreset && quick.dataVolumeGB > 0 && quick.concurrentUsers > 0) {
+      setAssessment(runFullAssessment(quick, advanced));
     }
   }, []);
 
