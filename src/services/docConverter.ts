@@ -1,4 +1,10 @@
 import { UploadedFile } from '../types/ingestion';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Configure pdfjs worker for browser environment
+if (typeof window !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '6.1.200'}/pdf.worker.min.mjs`;
+}
 
 /**
  * Microsoft MarkItDown Document Converter Service
@@ -86,9 +92,39 @@ async function readPlainText(file: File): Promise<string> {
 }
 
 async function convertPdfToMarkdown(file: File, filename: string): Promise<string> {
+  try {
+    const buffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({
+      data: new Uint8Array(buffer),
+      useSystemFonts: true,
+      disableFontFace: true,
+    });
+    const pdfDoc = await loadingTask.promise;
+
+    let md = `# PDF Document: ${filename}\n\n`;
+    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+      const page = await pdfDoc.getPage(pageNum);
+      const content = await page.getTextContent();
+      const pageText = content.items
+        .map((item: any) => item.str)
+        .join(' ')
+        .replace(/\s+/g, ' ');
+      if (pageText.trim()) {
+        md += `## [Page ${pageNum}]\n${pageText.trim()}\n\n`;
+      }
+    }
+
+    if (md.trim().length > 30) {
+      return md;
+    }
+  } catch (pdfErr) {
+    console.warn(`pdfjs-dist extraction notice for ${filename}, attempting raw binary fallback:`, pdfErr);
+  }
+
+  // Fallback to binary/text decoding if pdfjs is unavailable
   const buffer = await file.arrayBuffer();
   const uint8 = new Uint8Array(buffer);
-  
+
   let extractedText = extractPdfTextFromBinary(uint8);
 
   if (!extractedText || extractedText.trim().length < 30) {
