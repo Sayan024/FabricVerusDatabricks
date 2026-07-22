@@ -1,6 +1,7 @@
 import { DocumentExtractionResult, ExtractedField, FieldConflict } from '../types/ingestion';
 import { WorkloadMix, ProcessingPattern, TeamSkillset } from '../types/assessment';
 import { PRIMARY_MODEL, FALLBACK_MODEL } from './aiService';
+import { truncateTextForTokenSafety } from './aiWebappContext';
 
 const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '';
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -9,6 +10,8 @@ export async function extractWorkloadFromMarkdown(
   mergedMarkdown: string,
   docNames: string[]
 ): Promise<DocumentExtractionResult> {
+  const safeMarkdown = truncateTextForTokenSafety(mergedMarkdown, 35000);
+
   const systemPrompt = `You are an elite Principal Enterprise Cloud Data Architect auditing technical architecture documentation.
 Your task is to extract workload characteristics into a strict JSON object.
 
@@ -50,11 +53,11 @@ REQUIRED JSON OUTPUT SHAPE (OUTPUT ONLY VALID JSON, NO MARKDOWN BACKTICKS):
   let rawJson = '';
 
   try {
-    rawJson = await callOpenRouterExtraction(PRIMARY_MODEL, systemPrompt, mergedMarkdown);
+    rawJson = await callOpenRouterExtraction(PRIMARY_MODEL, systemPrompt, safeMarkdown);
   } catch (primaryErr) {
     console.warn(`Primary model (${PRIMARY_MODEL}) failed. Trying (${FALLBACK_MODEL}).`, primaryErr);
     try {
-      rawJson = await callOpenRouterExtraction(FALLBACK_MODEL, systemPrompt, mergedMarkdown);
+      rawJson = await callOpenRouterExtraction(FALLBACK_MODEL, systemPrompt, safeMarkdown);
     } catch (fallbackErr) {
       console.warn('Both LLM models failed. Applying heuristic fallback.', fallbackErr);
       return generateHeuristicExtractionFallback(mergedMarkdown, docNames);

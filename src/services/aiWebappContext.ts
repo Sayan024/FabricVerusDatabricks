@@ -1,10 +1,21 @@
 import { QuickInputs, AdvancedInputs } from '../types/assessment';
 
+export function truncateTextForTokenSafety(text: string, maxChars = 20000): string {
+  if (!text || text.length <= maxChars) return text || '';
+  const half = Math.floor((maxChars - 200) / 2);
+  const head = text.substring(0, half);
+  const tail = text.substring(text.length - half);
+  return `${head}\n\n... [Content truncated for AI model token limit safety (${text.length} chars reduced to ${maxChars} chars)] ...\n\n${tail}`;
+}
+
 export function buildWebappSystemPromptMarkdown(
   quickInputs: QuickInputs,
   advancedInputs: AdvancedInputs,
-  extractedDocText?: string
+  extractedDocText?: string,
+  maxDocChars = 20000
 ): string {
+  const safeDocText = truncateTextForTokenSafety(extractedDocText || '', maxDocChars);
+
   return `
 # ENTERPRISE AI SOLUTION ARCHITECT SYSTEM PROMPT
 
@@ -61,8 +72,8 @@ You are an expert Enterprise AI Solution Architect specializing in Microsoft Fab
 ## EXTRACTED ARCHITECTURE DOCUMENT CONTEXT (UPLOADED BY USER)
 
 ${
-  extractedDocText && extractedDocText.trim().length > 0
-    ? `The user uploaded an architecture specification document. Here is the verbatim extracted content:\n\n"""\n${extractedDocText.trim()}\n"""`
+  safeDocText && safeDocText.trim().length > 0
+    ? `The user uploaded an architecture specification document. Here is the extracted content:\n\n"""\n${safeDocText.trim()}\n"""`
     : 'No external architecture document was uploaded for this session. Use the Workload Profile inputs above.'
 }
 

@@ -39,11 +39,14 @@ export async function sendAIChatMessage(
   userPrompt: string,
   extractedDocText?: string
 ): Promise<AIResponse> {
-  const systemPrompt = buildWebappSystemPromptMarkdown(quick, advanced, extractedDocText);
+  // Prune history to last 8 messages (4 turns) for token budget safety
+  const prunedHistory = messages.slice(-8);
+
+  const systemPrompt = buildWebappSystemPromptMarkdown(quick, advanced, extractedDocText, 18000);
 
   const formattedMessages: ChatMessage[] = [
     { role: 'system', content: systemPrompt },
-    ...messages,
+    ...prunedHistory,
     { role: 'user', content: userPrompt },
   ];
 
@@ -55,8 +58,31 @@ export async function sendAIChatMessage(
       modelUsed: PRIMARY_MODEL,
       isFallback: false,
     };
-  } catch (primaryErr) {
-    console.warn(`Primary AI model (${PRIMARY_MODEL}) failed. Falling back to (${FALLBACK_MODEL}). Error:`, primaryErr);
+  } catch (primaryErr: any) {
+    console.warn(`Primary AI model (${PRIMARY_MODEL}) failed:`, primaryErr?.message || primaryErr);
+
+    // If context length limit error occurred, attempt compressed system prompt retry
+    const isContextError = String(primaryErr?.message || '').includes('400') || String(primaryErr?.message || '').toLowerCase().includes('context length');
+
+    if (isContextError) {
+      console.info('Context window size exceeded. Executing compressed prompt auto-retry...');
+      try {
+        const compressedPrompt = buildWebappSystemPromptMarkdown(quick, advanced, extractedDocText, 5000);
+        const compressedMessages: ChatMessage[] = [
+          { role: 'system', content: compressedPrompt },
+          ...messages.slice(-2),
+          { role: 'user', content: userPrompt },
+        ];
+        const res = await callOpenRouter(PRIMARY_MODEL, compressedMessages);
+        return {
+          content: sanitizeAIText(res.text),
+          modelUsed: `${PRIMARY_MODEL} (compressed)`,
+          isFallback: false,
+        };
+      } catch (compressedErr) {
+        console.warn('Compressed prompt retry failed:', compressedErr);
+      }
+    }
 
     // Fallback Model
     try {
@@ -66,9 +92,14 @@ export async function sendAIChatMessage(
         modelUsed: FALLBACK_MODEL,
         isFallback: true,
       };
-    } catch (fallbackErr) {
+    } catch (fallbackErr: any) {
       console.error(`Both AI models failed:`, fallbackErr);
-      throw new Error('AI Copilot service is currently unavailable. Please check internet connection or API status.');
+
+      if (isContextError || String(fallbackErr?.message || '').includes('400')) {
+        throw new Error('The uploaded document is too large for the AI context limit. The tool has automatically loaded your extracted fields into the assessment model.');
+      }
+
+      throw new Error('AI Copilot service is currently unavailable. Please check internet connection or API key status.');
     }
   }
 }
