@@ -1,11 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import { MONTHLY_UPDATES, PlatformUpdateItem } from '../data/monthlyUpdatesData';
-import { Sparkles, ExternalLink, Filter, Search, Zap, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ExternalLink, Filter, Search, Zap, X } from 'lucide-react';
 
 export const FeatureUpdatesCard: React.FC = () => {
   const [platformFilter, setPlatformFilter] = useState<'All' | 'Microsoft Fabric' | 'Azure Databricks'>('All');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const isFiltered = platformFilter !== 'All' || categoryFilter !== 'All' || searchQuery.trim() !== '';
+
+  const clearFilters = () => {
+    setPlatformFilter('All');
+    setCategoryFilter('All');
+    setSearchQuery('');
+  };
 
   const filteredUpdates = useMemo(() => {
     return MONTHLY_UPDATES.filter((item) => {
@@ -118,6 +126,18 @@ export const FeatureUpdatesCard: React.FC = () => {
               className="w-44 sm:w-56 rounded-xl border border-slate-200 bg-white py-1.5 pl-8 pr-3 text-xs font-semibold text-slate-900 outline-none focus:border-teal-500 shadow-2xs"
             />
           </div>
+
+          {/* Clear Filters — only visible when any filter is active */}
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="flex items-center gap-1.5 rounded-xl border border-red-300 bg-red-50 px-3 py-1.5 text-xs font-black text-red-700 hover:bg-red-100 transition cursor-pointer shadow-2xs active:scale-95"
+            >
+              <X className="h-3.5 w-3.5" />
+              Clear Filters
+            </button>
+          )}
         </div>
       </div>
 
