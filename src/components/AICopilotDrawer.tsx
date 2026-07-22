@@ -87,7 +87,41 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
       const trimmed = block.trim();
       if (!trimmed) return null;
 
-      const lines = trimmed.split(/\n/);
+      const lines = trimmed.split(/\n/).map((l) => l.trim()).filter(Boolean);
+
+      // Check if block is a Markdown table
+      const isTableBlock = lines.length >= 2 && lines.every((l) => l.startsWith('|') && l.endsWith('|'));
+      if (isTableBlock) {
+        const headerRow = lines[0].split('|').slice(1, -1).map((c) => c.trim());
+        const bodyRows = lines.slice(1).filter((l) => !/^\|[ \t\-\|]+\|$/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()));
+
+        return (
+          <div key={idx} className="overflow-x-auto my-3 rounded-xl border border-slate-200 shadow-2xs bg-white">
+            <table className="w-full text-[11px] text-left border-collapse">
+              <thead>
+                <tr className="bg-gradient-to-r from-teal-900 to-slate-900 text-white font-bold">
+                  {headerRow.map((cell, cIdx) => (
+                    <th key={cIdx} className="px-2.5 py-1.5 border-b border-teal-700/50 font-black">
+                      {parseInlineBold(cell)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {bodyRows.map((row, rIdx) => (
+                  <tr key={rIdx} className={rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/70 hover:bg-teal-50/40 transition-colors'}>
+                    {row.map((cell, cIdx) => (
+                      <td key={cIdx} className="px-2.5 py-1.5 text-slate-800 font-medium leading-normal">
+                        {parseInlineBold(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
 
       return (
         <div key={idx} className="space-y-1.5 mb-2">
@@ -95,8 +129,25 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             const l = line.trim();
             if (!l) return null;
 
-            const isHeaderMatch = l.match(/^(\*\*.*?\*\*|[^:\n]{2,30}:)\s*[-–—]?\s*(.*)/);
+            // Handle Markdown headings (## Heading, ### Subheading)
+            const headingMatch = l.match(/^(#{1,6})\s+(.*)/);
+            if (headingMatch) {
+              const level = headingMatch[1].length;
+              const titleText = headingMatch[2];
+              return (
+                <h4
+                  key={lineIdx}
+                  className={`font-black text-teal-950 tracking-tight mt-3 mb-1 flex items-center gap-1.5 ${
+                    level <= 2 ? 'text-xs uppercase tracking-wider text-teal-950 border-b border-teal-300/80 pb-1' : 'text-xs uppercase tracking-wider text-teal-900 border-b border-teal-100 pb-0.5'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-teal-600 shrink-0" />
+                  {parseInlineBold(titleText)}
+                </h4>
+              );
+            }
 
+            const isHeaderMatch = l.match(/^(\*\*.*?\*\*|[^:\n]{2,30}:)\s*[-–—]?\s*(.*)/);
             if (isHeaderMatch) {
               const headerRaw = isHeaderMatch[1];
               const bodyContent = isHeaderMatch[2];

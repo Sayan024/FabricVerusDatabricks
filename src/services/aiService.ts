@@ -31,16 +31,27 @@ export function sanitizeAIText(text: string): string {
   // 3. Remove non-Latin foreign scripts (Korean, Chinese, Japanese, Cyrillic, Indic, Arabic, Hebrew, Thai, etc.)
   cleaned = cleaned.replace(/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F\u4E00-\u9FFF\u3400-\u4DBF\u3040-\u309F\u30A0-\u30FF\u0400-\u04FF\u0600-\u06FF\u0750-\u077F\u0900-\u097F\u0980-\u09FF\u0B80-\u0CFF\u0590-\u05FF\u0E00-\u0E7F]/g, '');
 
-  // 4. Remove backslash escaping from dollar signs, hashes, and markdown formatting
+  // 4. Clean up orphaned bullet characters followed by a newline (e.g., "•\n*Item" -> "* Item")
+  cleaned = cleaned.replace(/[•·]\s*\n+\s*([*\-])/g, '$1 ');
+  cleaned = cleaned.replace(/[•·]\s*\n+\s*/g, '- ');
+
+  // 5. Remove backslash escaping from dollar signs, hashes, and markdown formatting
   cleaned = cleaned.replace(/\\([$#*_`\-\+\(\)])/g, '$1');
 
-  // 5. Clean up duplicate or trailing dashes caused by stripped words
-  cleaned = cleaned.replace(/-\s*-\s*/g, '- ');
+  // 6. Clean up garbled non-numeric currency tokens like "$arefa" -> ""
+  cleaned = cleaned.replace(/\$\s*[a-zA-Z]{3,}\b/g, '');
 
-  // 6. Fix broken bold markdown formatting where newlines are trapped inside ** (e.g. "**Header\n**" -> "**Header**\n")
+  // 7. Clean up broken markdown table divider rows (e.g. "|- - |- - - - |" -> "|---|---|")
+  cleaned = cleaned.replace(/^\|[ \t\-\|]+\|$/gm, (match) => {
+    const cols = match.split('|').length - 2;
+    return '|' + Array(Math.max(1, cols)).fill('---').join('|') + '|';
+  });
+
+  // 8. Fix broken bold markdown formatting where newlines are trapped inside ** (e.g. "**Header\n**" -> "**Header**\n")
   cleaned = cleaned.replace(/\*\*([^\*\n]+)\n+\*\*/g, '**$1**\n');
+  cleaned = cleaned.replace(/\*([^\*\n]+)\*\*/g, '**$1**');
 
-  // 7. Normalize whitespace & zero-width spaces
+  // 9. Normalize whitespace & zero-width spaces
   cleaned = cleaned
     .replace(/[\u200B-\u200D\uFEFF\u00A0\u202F\u2009]/g, ' ')
     .replace(/[\u2010-\u2015\u2011]/g, '-')
