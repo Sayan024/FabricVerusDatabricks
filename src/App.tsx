@@ -14,8 +14,9 @@ import { FeatureUpdatesCard } from './components/FeatureUpdatesCard';
 import { CostOptimizationCard } from './components/CostOptimizationCard';
 import { DisclaimerBanner } from './components/DisclaimerBanner';
 import { DocumentIngestionModal } from './components/DocumentIngestionModal';
+import { ArchitectureCanvas } from './components/ArchitectureCanvas';
 import { Footer } from './components/Footer';
-import { Calendar, CheckCircle, Sparkles, Upload, ArrowRight, Zap, Bot, MessageSquare } from 'lucide-react';
+import { Calendar, CheckCircle, Sparkles, Upload, ArrowRight, Zap, Bot, MessageSquare, Activity } from 'lucide-react';
 
 // Empty starting state shown to users on first load
 const BLANK_QUICK: QuickInputs = {
@@ -29,15 +30,27 @@ const BLANK_QUICK: QuickInputs = {
 
 // Only used when restoring from a shared URL or after "Load Demo"
 const DEFAULT_QUICK: QuickInputs = {
-  dataVolumeGB: 250,
-  concurrentUsers: 50,
-  workloadMix: 'bi_only',
-  processingPattern: 'batch',
+  dataVolumeGB: 1800,
+  concurrentUsers: 310,
+  workloadMix: 'bi_eng',
+  processingPattern: 'near_realtime',
   teamSkillset: 'sql_powerbi',
   region: 'central_india',
 };
 
-const DEFAULT_ADVANCED: AdvancedInputs = {};
+const DEFAULT_ADVANCED: AdvancedInputs = {
+  databasesCount: 18,
+  tablesCount: 3250,
+  storedProceduresCount: 782,
+  etlPipelinesCount: 94,
+  notebooksCount: 18,
+  excelFilesDaily: 145,
+  csvFilesDaily: 210,
+  reportsCount: 186,
+  semanticModelsCount: 37,
+  totalStorageGB: 31000,
+  fabricConnectors: ['sap_ecc', 'sql_server', 'oracle'],
+};
 
 function parseUrlInputs(): { quick: QuickInputs; advanced: AdvancedInputs; isPreset: boolean } {
   const sp = new URLSearchParams(window.location.search);
@@ -83,7 +96,7 @@ function encodeUrlInputs(quick: QuickInputs, advanced?: AdvancedInputs) {
 }
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'engine' | 'updates'>('engine');
+  const [activeTab, setActiveTab] = useState<'engine' | 'canvas' | 'updates'>('engine');
   const [quickInputs, setQuickInputs] = useState<QuickInputs>(() => parseUrlInputs().quick);
   const [advancedInputs, setAdvancedInputs] = useState<AdvancedInputs>(() => parseUrlInputs().advanced);
   const [extractedDocText, setExtractedDocText] = useState<string>('');
@@ -183,8 +196,33 @@ export const App: React.FC = () => {
       <Header activeTab={activeTab} onTabChange={setActiveTab} onOpenIngestionModal={() => setIsIngestionModalOpen(true)} />
 
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 space-y-8">
-        {/* Render Dedicated Monthly Release Tracker Page */}
-        {activeTab === 'updates' ? (
+        {/* Render Dedicated Architecture Canvas Page */}
+        {activeTab === 'canvas' ? (
+          <div className="space-y-6">
+            {/* Top Breadcrumb & Return Button */}
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4 no-print">
+              <div>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                  <Activity className="h-6 w-6 text-teal-600" />
+                  Interactive Architecture Canvas Designer
+                </h1>
+                <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                  Visual Architecture Builder with Real-Time Moving Dotted Lines, Directional Arrows & Presets
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('engine')}
+                className="flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2 text-xs font-black text-white hover:bg-slate-800 transition cursor-pointer shadow-xs"
+              >
+                <span>← Back to Decision Engine</span>
+              </button>
+            </div>
+
+            <ArchitectureCanvas quickInputs={quickInputs} advancedInputs={advancedInputs} />
+          </div>
+        ) : activeTab === 'updates' ? (
           <div className="space-y-6">
             {/* Top Breadcrumb & Return Button */}
             <div className="flex items-center justify-between border-b border-slate-200 pb-4 no-print">

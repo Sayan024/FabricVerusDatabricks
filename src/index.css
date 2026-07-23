@@ -34,6 +34,28 @@
   scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
+/* Architecture Canvas Moving Dotted Line & Flow Animations */
+@keyframes moving-dash {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-moving-dash {
+  animation: moving-dash 1.2s linear infinite;
+}
+
+.animate-moving-dash-fast {
+  animation: moving-dash 0.6s linear infinite;
+}
+
+.animate-moving-dash-slow {
+  animation: moving-dash 2.4s linear infinite;
+}
+
 /* Executive PDF Print Styles — Pristine Compact Page Layout */
 @media print {
   * {

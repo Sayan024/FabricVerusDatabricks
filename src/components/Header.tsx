@@ -1,9 +1,9 @@
 import React from 'react';
-import { Sparkles, Layers, Zap } from 'lucide-react';
+import { Sparkles, Layers, Zap, Activity } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'engine' | 'updates';
-  onTabChange: (tab: 'engine' | 'updates') => void;
+  activeTab: 'engine' | 'canvas' | 'updates';
+  onTabChange: (tab: 'engine' | 'canvas' | 'updates') => void;
   onOpenIngestionModal?: () => void;
 }
 
@@ -52,6 +52,22 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, onOpenIn
 
             <button
               type="button"
+              onClick={() => onTabChange('canvas')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-black transition cursor-pointer ${
+                activeTab === 'canvas'
+                  ? 'bg-gradient-to-r from-teal-800 to-cyan-700 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Activity className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Architecture Canvas</span>
+              <span className="bg-emerald-400 text-slate-950 px-1.5 py-0.2 text-[9px] font-black rounded-full animate-pulse">
+                LIVE
+              </span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => onTabChange('updates')}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-black transition cursor-pointer ${
                 activeTab === 'updates'
@@ -89,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, onOpenIn
       </div>
 
       {/* Mobile Tab Switcher */}
-      <div className="flex md:hidden border-t border-slate-200 bg-slate-50 p-1">
+      <div className="flex md:hidden border-t border-slate-200 bg-slate-50 p-1 gap-1">
         <button
           type="button"
           onClick={() => onTabChange('engine')}
@@ -98,7 +114,17 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, onOpenIn
           }`}
         >
           <Layers className="h-3.5 w-3.5" />
-          <span>Decision Engine</span>
+          <span>Engine</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onTabChange('canvas')}
+          className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-bold ${
+            activeTab === 'canvas' ? 'bg-teal-800 text-white rounded-lg shadow-2xs' : 'text-slate-600'
+          }`}
+        >
+          <Activity className="h-3.5 w-3.5 text-emerald-400" />
+          <span>Canvas</span>
         </button>
         <button
           type="button"
@@ -108,7 +134,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, onOpenIn
           }`}
         >
           <Zap className="h-3.5 w-3.5 text-amber-300" />
-          <span>Monthly Updates</span>
+          <span>Updates</span>
         </button>
       </div>
     </header>
